@@ -1,8 +1,8 @@
 tel:
-	python telegram-bot.py
+	python main.py tel
 
 dis:
-	python discord-bot.py
+	python main.py dis
 
 env:
 	source env.sh
