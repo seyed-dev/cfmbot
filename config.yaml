@@ -1,0 +1,13 @@
+telegram:
+  token: "YOUR_TELEGRAM_BOT_TOKEN"
+  username: "ROBOT_USERNAME"
+
+discord:
+  token: "DISCORD_TOKEN"
+
+db:
+  username: ""
+  password: ""
+  dbname: "DBNAME"
+  host: "localhost:27017"
+  url: "mongodb://USER:PASS@localhost:27017/?authSource=admin&replicaSet=rs0"

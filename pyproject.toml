@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "cfmbot"
+version = "0.1.0"
+description = "cloud file manager for seyed bax bootcamp"
+authors = ["seyed <me@seyed.dev>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+discord-py = "^2.3.2"
+aiogram = "^3.4.1"
+pyyaml = "^6.0.1"
+mongoengine = "^0.28.2"
+aggify = "^0.3.8"
+dynaconf = "^3.2.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
