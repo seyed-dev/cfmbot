@@ -1,18 +1,15 @@
-from aiogram.utils.keyboard import KeyboardBuilder
-from aiogram.types import KeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 def start_keyboard():
     # Create ReplyKeyboardMarkup
-    builder = KeyboardBuilder(button_type=KeyboardButton)
+    builder = InlineKeyboardBuilder()
     buttons = [
         "درباره دوره", "لینک دعوت",
         "کیف پول", "لیست فیلم ها",
         "فیلم های من", "زمان کلاس ها",
     ]
     for btn in buttons:
-        builder.add(
-            KeyboardButton(text=btn)
-        )
-        
-    return builder
+        builder.button(text=btn, callback_data='test')
+    builder.adjust(2,2,1)
+    return builder.as_markup()
