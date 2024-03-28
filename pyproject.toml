@@ -13,6 +13,7 @@ pyyaml = "^6.0.1"
 mongoengine = "^0.28.2"
 aggify = "^0.3.8"
 dynaconf = "^3.2.5"
+watchdog = "^4.0.0"
 
 
 [build-system]
