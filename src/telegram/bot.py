@@ -19,6 +19,7 @@ import src.telegram.keyboards as keyboards
 
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
+config = {}
 
 
 @dp.message(CommandStart())
@@ -26,32 +27,50 @@ async def command_start_handler(message: Message) -> None:
     """
     This handler receives messages with `/start` command
     """
-    # Most event objects have aliases for API methods that can be called in events' context
-    # For example if you want to answer to incoming message you can use `message.answer(...)` alias
-    # and the target chat will be passed to :ref:`aiogram.methods.send_message.SendMessage`
-    # method automatically or call API method directly via
-    # Bot instance: `bot.send_message(chat_id=message.chat.id, ...)`
-    await message.answer(messages.start, reply_markup=keyboards.start_keyboard())
+    if len(message.text.split()) == 1:
+        await message.answer(messages.start, reply_markup=keyboards.start_keyboard())
+        return
+    
+    ـ, query_command = message.text.split()
+    if query_command.startswith("ref_"):
+        if message.from_user.id == int(query_command.split('_')[1]):
+            await message.answer("خودتو دعوت مردک", reply_markup=keyboards.start_keyboard())
+        else:
+            await message.answer("خوش اومدی قشنگم", reply_markup=keyboards.start_keyboard())
+
     
 
 
-@dp.message()
-async def echo_handler(message: types.Message) -> None:
-    """
-    Handler will forward receive a message back to the sender
+@dp.callback_query()
+async def handle_callback_query(callback_query: types.CallbackQuery):
+    # Extracting callback_data from the InlineKeyboardButton
+    callback_data = callback_query.data
+    # Here you can parse the callback_data and take actions accordingly
 
-    By default, message handler will handle all message types (like a text, photo, sticker etc.)
-    """
-    try:
-        # Send a copy of the received message
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        # But not all the types is supported to be copied so need to handle it
-        await message.answer("Nice try!")
+    match (callback_data):
+        case "about_bootcamp":
+            await callback_query.message.answer("about bot camp!")
+        case "invite_link":
+            await callback_query.message.answer(
+                messages.invite_link.format(
+                    bot_username=config["telegram"]["username"], 
+                    user_id=callback_query.from_user.id
+                )
+            )
+        case "wallet":
+            await callback_query.message.answer("You clicked the button!")
+        case "video_list":
+            await callback_query.message.answer("You clicked the button!")
+        case "my_videos":
+            await callback_query.message.answer("You clicked the button!")
+        case "class_time":
+            await callback_query.message.answer("You clicked the button!")
+
 
 
 async def main() -> None:
     # Load configs from yaml file
+    global config
     config = load_config("config.yaml")
     # Connect to db
     connect(
