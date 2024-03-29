@@ -6,10 +6,11 @@ class User(Document):
     username = StringField()
     wallet = IntField(min_value=0, default=0)
     invites = IntField(min_value=0, default=0)
+    inviter = IntField()
     is_premium = BooleanField()
 
     meta = {
-        'collection': 'user',
+        'collection': 'users',
         'indexes': [
             'telegram_id',
             'username'
