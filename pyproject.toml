@@ -14,6 +14,8 @@ mongoengine = "^0.28.2"
 aggify = "^0.3.8"
 dynaconf = "^3.2.5"
 watchdog = "^4.0.0"
+boto3 = "^1.34.74"
+minio = "^7.2.5"
 
 
 [build-system]
