@@ -11,3 +11,14 @@ db:
   dbname: "DBNAME"
   host: "localhost:27017"
   url: "mongodb://USER:PASS@localhost:27017/?authSource=admin&replicaSet=rs0"
+
+s3:
+  provider: "aws"
+  host: ""
+  port: ""
+  secure: true
+  access_key: ""
+  secret_key: ""
+  bucket_name: ""
+  upload_url_expire: 300  # 5 minute
+  object_url_expire: 3600  # 1 hour
