@@ -93,19 +93,18 @@ class MinioProvider(BaseS3Provider):
         upload_to,
         file_path,
         part_size: int,
-        public: bool = True,
         content_type: str = None,
-        chat: bool = False,
     ) -> None:
         bucket_name = self.bucket_name
 
-        self.client.fput_object(
+        upload = self.client.fput_object(
             bucket_name,
             upload_to,
             file_path,
             part_size=part_size,
             content_type=content_type,
         )
+        print(upload)
 
     def copy_object(
         self, old_dir: str, new_dir: str, old_bucket: str = None, new_bucket: str = None
@@ -141,19 +140,18 @@ class AWSProvider(BaseS3Provider):
                 "Key": object_name,
                 "ContentType": self.content_type_list[content_type],
             },
-            ExpiresIn=self.upload_url_expire * 3600,
+            ExpiresIn=self.upload_url_expire,
         )
         return url  # noqa
 
     def get_object_url(
-        self, object_name, bucket_name: str = None, chat: bool = False, **extra
+        self, object_name, **extra
     ):
-        bucket_name = bucket_name or self.bucket_name
 
         url = self.client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": bucket_name, "Key": object_name},
-            ExpiresIn=self.object_url_expire * 3600,
+            Params={"Bucket": self.bucket_name, "Key": object_name},
+            ExpiresIn=self.object_url_expire,
         )
         return url  # noqa
 

@@ -14,8 +14,8 @@ from common.utils import load_config
 
 from mongoengine import connect
 
-import src.telegram.messages as messages
-import src.telegram.keyboards as keyboards
+import services.telegram.messages as messages
+import services.telegram.keyboards as keyboards
 
 from models.mgo_models import User
 

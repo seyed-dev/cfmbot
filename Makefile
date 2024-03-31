@@ -6,3 +6,6 @@ dis:
 
 env:
 	source env.sh
+
+upload:
+	python main.py upload $(file)
