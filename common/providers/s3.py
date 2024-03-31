@@ -20,6 +20,7 @@ class BaseS3Provider:
         self.secure = config.get("secure")
         self.access_key = config.get("access_key")
         self.secret_key = config.get("secret_key")
+        self.region = config.get("region")
         self.bucket_name = config.get("bucket_name")
         self.upload_url_expire = config.get("upload_url_expire")
         self.object_url_expire = config.get("object_url_expire")
@@ -130,6 +131,7 @@ class AWSProvider(BaseS3Provider):
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
             endpoint_url=f"https://{self.host}",
+            region_name=self.region,
         )
 
     def get_upload_url(self, object_name, content_type, bucket_name: str = None):

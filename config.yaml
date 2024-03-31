@@ -19,6 +19,7 @@ s3:
   secure: true
   access_key: ""
   secret_key: ""
+  region: ""
   bucket_name: ""
   upload_url_expire: 300  # 5 minute
   object_url_expire: 3600  # 1 hour
