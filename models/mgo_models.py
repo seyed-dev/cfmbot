@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, IntField, BooleanField
+from mongoengine import Document, StringField, IntField, BooleanField, ListField, ReferenceField
 
 class User(Document):
     telegram_id = IntField(required=True, unique=True)
@@ -18,3 +18,19 @@ class User(Document):
     }
 
 
+class ClassRecord(Document):
+    title = StringField(required=True)
+    description = StringField()
+    video_path = StringField()
+    users = ListField(ReferenceField(User))
+    is_active = BooleanField(default=True)
+    is_downloadable = BooleanField(default=True)
+
+    meta = {
+        'collection': 'class.record',
+        'indexes': [
+            'title',
+            'is_active',
+            'is_downloadable'
+        ]
+    }
