@@ -9,6 +9,7 @@ parser.add_argument("command", choices=["tel", "dis", "upload"], help="Choose te
 
 # For upload command, add an optional argument for file path
 if "upload" in sys.argv:
+    parser.add_argument('class_id', type=str, help='ID of the class')
     parser.add_argument("file_path", type=str, help="Path to the file to upload")
 
 args = parser.parse_args()
@@ -23,5 +24,4 @@ elif args.command == "dis":
 elif args.command == "upload":
     # Call the upload.py script with the provided file path
     if hasattr(args, "file_path"):
-        file_path = args.file_path
-        upload_to_s3(file_path)
+        upload_to_s3(args.file_path, args.class_id)
