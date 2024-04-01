@@ -1,5 +1,7 @@
 import asyncio
+import json
 import logging
+import re
 import sys
 
 from os import getenv
@@ -17,7 +19,7 @@ from mongoengine import connect
 import services.telegram.messages as messages
 import services.telegram.keyboards as keyboards
 
-from models.mgo_models import User
+from models.mgo_models import ClassRecord, User, UserStep
 
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
@@ -86,6 +88,55 @@ async def command_start_handler(message: Message) -> None:
     # Send the start message with start keyboard to the user
     await message.answer(messages.start, reply_markup=keyboards.start_keyboard())
 
+@dp.message()
+async def message_handler(message: types.Message) -> None:
+    """
+    handle any messages
+    """
+    user = User.objects.get(telegram_id=message.from_user.id)
+    user_step = UserStep.objects.filter(user=user).first()
+
+    if message.text == "cancel":
+        user_step.delete()
+
+    if not user_step:
+        if message.text == "create_class":
+            UserStep.objects.create(
+                user=user,
+                step="INPUT_CLASS_NAME"
+            )
+            await message.answer("please input class name")
+    else:
+        if user_step.step == "INPUT_CLASS_NAME":
+            user_step.data = json.dumps({
+                "title": message.text
+            })
+            user_step.step = "INPUT_CLASS_DESC"
+            user_step.save()
+            await message.answer("please input class description")
+        elif user_step.step == "INPUT_CLASS_DESC":
+            user_step.data = json.dumps(
+                json.loads(user_step.data) | {
+                    "desc": message.text
+                }
+            )
+            user_step.step = "INPUT_CLASS_APPROVE"
+            user_step.save()
+            await message.answer("create class ? if you send no , cancel else approve")
+        elif user_step.step == "INPUT_CLASS_APPROVE":
+            if message.text == "no":
+                user_step.delete()
+                await message.answer("canceled")
+            else:
+                data = json.loads(user_step.data)
+                class_record = ClassRecord.objects.create(
+                    title=data["title"],
+                    description=data["desc"],
+                )
+                user_step.delete()
+                await message.answer(f"class record created : `{class_record.id}`")
+            
+
 
 @dp.callback_query()
 async def handle_callback_query(callback_query: types.CallbackQuery):
@@ -106,14 +157,16 @@ async def handle_callback_query(callback_query: types.CallbackQuery):
         case "wallet":
             user = User.objects.get(telegram_id=int(callback_query.from_user.id))
             await callback_query.message.answer(messages.wallet_balance.format(user.wallet), reply_markup=keyboards.start_keyboard())
-        case "video_list":
-            await callback_query.message.answer("You clicked the button!", reply_markup=keyboards.start_keyboard())
+        case "class_list":
+            await callback_query.message.answer("class records list", reply_markup=keyboards.class_keyboard())
         case "my_videos":
             await callback_query.message.answer("You clicked the button!", reply_markup=keyboards.start_keyboard())
         case "class_time":
             await callback_query.message.answer(messages.class_time, reply_markup=keyboards.start_keyboard())
-
-
+        case _:
+            if callback_data.startswith("class_"):
+                cls = ClassRecord.objects.get(id=callback_data.split('_')[1])
+                await callback_query.message.answer(cls.title)
 
 async def main() -> None:
     # Load configs from yaml file

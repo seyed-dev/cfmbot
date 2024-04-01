@@ -21,7 +21,6 @@ class User(Document):
 class ClassRecord(Document):
     title = StringField(required=True)
     description = StringField()
-    video_path = StringField()
     users = ListField(ReferenceField(User))
     is_active = BooleanField(default=True)
     is_downloadable = BooleanField(default=True)
@@ -32,5 +31,24 @@ class ClassRecord(Document):
             'title',
             'is_active',
             'is_downloadable'
+        ]
+    }
+
+
+class UserStep(Document):
+    steps = (
+        ("INPUT_CLASS_NAME", "input class record name"),
+        ("INPUT_CLASS_DESC", "input class record description"),
+        ("INPUT_CLASS_APPROVE", "approve to create class"),
+    )
+    user = ReferenceField(User, required=True, unique=True)
+    step = StringField(choices=steps)
+    data = StringField()
+
+    meta = {
+        'collection': 'user.steps',
+        'indexes': [
+            'user',
+            'step',
         ]
     }
