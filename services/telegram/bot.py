@@ -5,6 +5,7 @@ import re
 import sys
 
 from os import getenv
+from typing import List, Tuple
 
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums import ParseMode
@@ -160,13 +161,17 @@ async def handle_callback_query(callback_query: types.CallbackQuery):
         case "class_list":
             await callback_query.message.answer("class records list", reply_markup=keyboards.class_keyboard())
         case "my_videos":
-            await callback_query.message.answer("You clicked the button!", reply_markup=keyboards.start_keyboard())
+            video_list: List[Tuple[int, str]] = ... # TODO - code the method to return list of videos ; args : start: int
+            await callback_query.message.answer("choose video", reply_markup=keyboards.video_list_keyboard(video_list))
         case "class_time":
             await callback_query.message.answer(messages.class_time, reply_markup=keyboards.start_keyboard())
         case _:
             if callback_data.startswith("class_"):
                 cls = ClassRecord.objects.get(id=callback_data.split('_')[1])
                 await callback_query.message.answer(cls.title)
+                
+    # TODO : write callback query vidlst-nxt-page:{index}') 
+    #                             vidlst-bck-page:{video_list[0][0]}
 
 async def main() -> None:
     # Load configs from yaml file
