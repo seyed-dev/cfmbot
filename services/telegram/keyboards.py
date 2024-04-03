@@ -1,4 +1,7 @@
+from typing import List, Tuple
+
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from models.mgo_models import ClassRecord
 
 def start_keyboard():
@@ -12,6 +15,24 @@ def start_keyboard():
     builder.button(text="فیلم های من", callback_data='my_videos')
     builder.button(text="زمان کلاس ها", callback_data='class_time')
     builder.adjust(2)
+    return builder.as_markup()
+
+def video_list_keyboard(video_list: List[Tuple[int, str]]): # video index and callback data
+    # Create ReplyKeyboardMarkup of a list as videos data
+    builder = InlineKeyboardBuilder()
+    
+    for video in video_list:
+        index, cllbckdt = video
+        builder.button(text=index, callback_data=cllbckdt)
+    builder.adjust(3)
+    
+    # add the index of items for track pagination 
+    builder.button(text='next', callback_data=f'vidlst-nxt-page:{index}') 
+    builder.button(text='back', callback_data=f'vidlst-bck-page:{video_list[0][0]}')
+    builder.adjust(2)
+    
+    builder.button(text="home", callback_data='vidlst-home')
+    builder.adjust(1)
     return builder.as_markup()
 
 def class_keyboard():
